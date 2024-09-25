@@ -38,11 +38,11 @@ export const UploadImage = () => {
                 }}
                 onUploadError={handleUploadError}
                 
-            /> : <div className="mt-2 w-[720px]">
+            /> : <div className="mt-2 max-w-72 lg:w-[720px]">
                     <ul>
                         {images.map((image, index) => (
                             <li key={index} className="mt-2 text-white">
-                                <p><strong>File Key: </strong>{image.fileKey}</p>
+                                <p className="font-medium">Uploaded Image</p>
                                 <ImageLoader src={image.fileKey} alt={image.fileName} />
                             </li>
                         ))}
@@ -63,7 +63,7 @@ const ImageLoader = ({ src, alt }: {src: string, alt: string}) => {
         },5000)
     };
     return (
-        <div className="relative">
+        <div className="relative min-w-72 max-w-72">
             {loading && (
                 <div
                     className="absolute inline-block h-8 mt-32 ml-32 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"

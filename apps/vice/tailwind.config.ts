@@ -21,10 +21,14 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
-        
+        brown: {
+          light: '#D2B48C',   // Tan
+          DEFAULT: '#A52A2A', // Standard brown
+          dark: '#5C4033',
+        },
       },
     },
-  },
-  plugins: [],
-};
+    plugins: [],
+  }
+}
 export default config;
