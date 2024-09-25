@@ -3,6 +3,9 @@ import bcrypt from 'bcrypt';
 import prisma  from "@repo/db/prisma"
 import { Session } from "next-auth";
 import { JWT } from "next-auth/jwt";
+import { pages } from "next/dist/build/templates/app-page";
+
+
 
 
 declare module "next-auth" {
@@ -32,16 +35,13 @@ export const authOptions = {
             },
             async authorize(credentials: Credentials | undefined){
                 if (!credentials) {
-                    return null;
+                    throw new Error("ProvideCredentials")
                 }
                 const { name, email, password } = credentials;
                 if(!name || !email || !password){
-                    return null
+                    throw new Error("ProvideCredentials")
                 }
-                // const session = await getServerSession(AuthOptions);
-                // if(session && session.user){
-                //     return null
-                // }
+                
                 const hashedPassword = await bcrypt.hash(credentials.password, 10)
                 const existingUser = await prisma.user.findFirst({
                     where: {
@@ -57,25 +57,26 @@ export const authOptions = {
                             email: existingUser.email,
                         }
                     }
-                    return null;
-                }
-                try{
-                    const user = await prisma.user.create({
-                        data: {
-                            name: name,
-                            email: email,
-                            password: hashedPassword
+                    throw new Error("IncorrectPassword")
+                }else{
+                    try{
+                        const user = await prisma.user.create({
+                            data: {
+                                name: name,
+                                email: email,
+                                password: hashedPassword
+                            }
+                        })
+                        return {
+                            id: user.id.toString(),
+                            name: user.name,
+                            email: user.email,
                         }
-                    })
-                    return {
-                        id: user.id.toString(),
-                        name: user.name,
-                        email: user.email,
+                    }catch(e){
+                        console.log(e)
+                        throw new Error("Error")
                     }
-                }catch(e){
-                    console.log(e)
                 }
-                return null
             }
         })
     ],
