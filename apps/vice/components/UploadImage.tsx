@@ -5,12 +5,15 @@ import Image from 'next/image';
 import { generateUploadDropzone } from "@uploadthing/react";
 import type { OurFileRouter } from "../app/api/uploadthing/core";
 import { useState, useEffect } from "react";
+import { getResponse } from "../actions/getResponse";
 
 const UploadDropzone = generateUploadDropzone<OurFileRouter>();
 
 
 export const UploadImage = () => {
     const [images, setImages] = useState<{ fileKey: string; fileName: string }[]>([]);
+    const [buttonPressed, setButtonPressed] = useState<boolean>(false)
+    const [data, setData] = useState<string | null>(null);
     const handleUploadError = (error: Error) => {
         console.error("Upload Error:", error);
         alert(`ERROR! ${error.message}`);
@@ -42,7 +45,12 @@ export const UploadImage = () => {
                             </div>
                         ))}
                     </div>
-                    <div className="absolute bottom-52 left-14 lg:left-16">
+                    {!buttonPressed ?<div onClick={async () => {
+                        const res = await getResponse();
+                        console.log(res)
+                        setData(res)
+                        setButtonPressed(true)
+                    }} className="absolute bottom-52 left-14 lg:left-16">
                         <div className="relative inline-flex group">
                             <div
                                 className="absolute transition-all duration-1000 opacity-50 -inset-px bg-gradient-to-r from-[#44BCFF] via-[#FF44EC] to-[#FF675E] rounded-xl blur-lg group-hover:opacity-100 group-hover:-inset-1 group-hover:duration-200 animate-tilt">
@@ -52,10 +60,12 @@ export const UploadImage = () => {
                                 role="button">Get Response
                             </a>
                         </div>
-                    </div>
+                    </div>: <div className="text-white text-2xl mt-96">
+                        <p>Your response is</p>
+                        <p>{data}</p>
+                        </div>}
                 </div>
             }
-            
         </main>
     );
 }

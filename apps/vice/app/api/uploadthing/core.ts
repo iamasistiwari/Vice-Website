@@ -1,10 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { getServerSession } from "next-auth";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { UploadThingError } from "uploadthing/server";
+import { authOptions } from "../../../lib/auth";
 
 const f = createUploadthing();
 
-const auth = (req: Request) => ({ id: "fakeId" }); // Fake auth function
+const auth = async (req: Request) => {
+    const session = await getServerSession(authOptions)
+    if(!session?.user && session){
+        return null
+    }
+    return session?.user
+}; // Fake auth function
 
 // FileRouter for your app, can contain multiple FileRoutes
 export const ourFileRouter = {
